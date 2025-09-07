@@ -68,13 +68,18 @@ uv run llm-edge run [OPTIONS]
 | `--number-of-images`  | int     | `3`                                             | Number of images to process                 |
 | `--realtime`          | bool    | `False`                                         | Enable realtime mode                        |
 | `--enable-inference`  | bool    | `False`                                         | Enable LLM inference integration            |
-| `--model`             | str     | `models/bitnet_b1_58-3B/ggml-model-i2_s.gguf`   | Path to model file                          |
+| `--model`             | str     | `models/bitnet_b1_58-3B/ggml-model-i2_s.gguf`   | Path to LLM model file                      |
 | `--n-predict`         | int     | `1`                                             | Number of tokens to predict                 |
 | `--threads`           | int     | `1`                                             | Number of threads to use                    |
 | `--prompt`            | str     | `Describe the image`                            | Prompt to send to the model                 |
 | `--ctx-size`          | int     | `512`                                           | Context size                                |
 | `--temperature`       | float   | `0.8`                                           | Sampling temperature                        |
 | `--conversation`      | bool    | `False`                                         | Enable conversation mode                    |
+
+### YOLO Model
+
+- The CLI uses YOLO for object detection. You can specify the YOLO model file (e.g., `yolov8n.pt`, `yolov8s.pt`) using the `--model` option if running detection only.
+- The current configuration is able to detect **11 classes** instead of the standard 10, allowing for extended verification and use cases.
 
 > **Note:** LLM inference is disabled by default. Use `--enable-inference` to activate BitNet LLM reasoning.
 
