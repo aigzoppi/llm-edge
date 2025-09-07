@@ -27,6 +27,13 @@ Make sure you have `uv` installed:
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
+Create a virtual enviroment
+```
+$ cd edgedemo
+$ uv venv
+$ uv sync
+$ source .venv/bin/activate
+```
 
 ##🏃 Usage
 
