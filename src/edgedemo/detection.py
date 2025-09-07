@@ -1,5 +1,6 @@
 
 import cv2
+import sys
 import os
 import logging
 from ultralytics import YOLO
@@ -42,6 +43,9 @@ class ImageLoader:
         """
         if not self._realtime:
             image_files = [img for img in os.listdir(self._image_path) if img.endswith('.jpg') or img.endswith('.png')]
+            if not image_files:
+                _logger.warning("No image files found in directory: %s", self._image_path)
+                sys.exit(1)
             for image in tqdm(image_files, desc="Loading images"):
                 full_path = os.path.join(self._image_path, image)
                 try:
