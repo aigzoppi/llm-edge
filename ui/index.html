@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge AI Demo</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .app-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+        
+        .camera-container {
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .video-wrapper {
+            position: relative;
+            display: inline-block;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+        
+        video {
+            width: 100%;
+            max-width: 640px;
+            height: auto;
+            display: block;
+        }
+        
+        .placeholder {
+            width: 640px;
+            height: 480px;
+            max-width: 100%;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1.2em;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+        }
+        
+        .controls {
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+            min-width: 120px;
+        }
+        
+        .start-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+        }
+        
+        .start-btn:hover {
+            background: linear-gradient(45deg, #45a049, #3d8b40);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+        
+        .stop-btn {
+            background: linear-gradient(45deg, #f44336, #d32f2f);
+            color: white;
+        }
+        
+        .stop-btn:hover {
+            background: linear-gradient(45deg, #d32f2f, #b71c1c);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.4);
+        }
+        
+        .status {
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .status.active {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #4caf50;
+        }
+        
+        .status.inactive {
+            background: #fce4ec;
+            color: #c2185b;
+            border: 1px solid #e91e63;
+        }
+        
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #f44336;
+        }
+        
+        .camera-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: left;
+        }
+        
+        .camera-info h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .info-item {
+            margin: 8px 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="app-container">
+            <div class="header">
+                <h1>Camera</h1>
+                <p>Camera Interface</p>
+            </div>
+            
+            <div class="camera-container">
+                <div class="video-wrapper">
+                    <video 
+                        ref="videoElement" 
+                        v-show="isStreaming" 
+                        autoplay 
+                        muted
+                        playsinline>
+                    </video>
+                    <div v-show="!isStreaming" class="placeholder">
+                        <div>
+                            <div style="font-size: 3em; margin-bottom: 10px;">📷</div>
+                            <div>Camera Preview</div>
+                            <div style="font-size: 0.9em; margin-top: 5px; opacity: 0.7;">
+                                Click "Start Camera" to begin
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="status" :class="statusClass">
+                    {{ statusMessage }}
+                </div>
+                
+                <div class="controls">
+                    <button 
+                        class="start-btn" 
+                        @click="startCamera" 
+                        :disabled="isStreaming || isLoading">
+                        {{ isLoading ? '⏳ Loading...' : '▶️ Start Camera' }}
+                    </button>
+                    
+                    <button 
+                        class="stop-btn" 
+                        @click="stopCamera" 
+                        :disabled="!isStreaming">
+                        ⏹️ Stop Camera
+                    </button>
+                </div>
+                
+                <div v-if="cameraInfo" class="camera-info">
+                    <h3>Camera Information</h3>
+                    <div class="info-item">
+                        <strong>Resolution:</strong> {{ cameraInfo.width }}x{{ cameraInfo.height }}
+                    </div>
+                    <div class="info-item">
+                        <strong>Frame Rate:</strong> {{ cameraInfo.frameRate }} fps
+                    </div>
+                    <div class="info-item">
+                        <strong>Device:</strong> {{ cameraInfo.deviceLabel || 'Default Camera' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    isStreaming: false,
+                    isLoading: false,
+                    stream: null,
+                    statusMessage: 'Camera ready to start',
+                    statusClass: 'inactive',
+                    cameraInfo: null,
+                    error: null
+                }
+            },
+            methods: {
+                async startCamera() {
+                    try {
+                        this.isLoading = true;
+                        this.statusMessage = 'Requesting camera access...';
+                        this.statusClass = 'inactive';
+                        this.error = null;
+
+                        // Request camera permissions with specific constraints
+                        const constraints = {
+                            video: {
+                                width: { ideal: 1280, min: 640 },
+                                height: { ideal: 720, min: 480 },
+                                frameRate: { ideal: 30, min: 15 }
+                            },
+                            audio: false
+                        };
+
+                        this.stream = await navigator.mediaDevices.getUserMedia(constraints);
+                        
+                        // Set up video element
+                        const video = this.$refs.videoElement;
+                        video.srcObject = this.stream;
+                        
+                        // Wait for video to be ready
+                        await new Promise((resolve) => {
+                            video.onloadedmetadata = () => {
+                                resolve();
+                            };
+                        });
+
+                        this.isStreaming = true;
+                        this.statusMessage = 'Camera is active and streaming';
+                        this.statusClass = 'active';
+                        
+                        // Get camera info
+                        this.updateCameraInfo();
+
+                    } catch (error) {
+                        console.error('Error accessing camera:', error);
+                        this.handleCameraError(error);
+                    } finally {
+                        this.isLoading = false;
+                    }
+                },
+
+                stopCamera() {
+                    try {
+                        if (this.stream) {
+                            // Stop all tracks
+                            this.stream.getTracks().forEach(track => {
+                                track.stop();
+                            });
+                            
+                            // Clear video source
+                            const video = this.$refs.videoElement;
+                            video.srcObject = null;
+                            
+                            this.stream = null;
+                        }
+
+                        this.isStreaming = false;
+                        this.statusMessage = 'Camera stopped';
+                        this.statusClass = 'inactive';
+                        this.cameraInfo = null;
+
+                    } catch (error) {
+                        console.error('Error stopping camera:', error);
+                        this.handleCameraError(error);
+                    }
+                },
+
+                updateCameraInfo() {
+                    if (this.stream) {
+                        const videoTrack = this.stream.getVideoTracks()[0];
+                        if (videoTrack) {
+                            const settings = videoTrack.getSettings();
+                            const video = this.$refs.videoElement;
+                            
+                            this.cameraInfo = {
+                                width: settings.width || video.videoWidth,
+                                height: settings.height || video.videoHeight,
+                                frameRate: settings.frameRate || 30,
+                                deviceLabel: videoTrack.label
+                            };
+                        }
+                    }
+                },
+
+                handleCameraError(error) {
+                    let message = 'Camera error occurred';
+                    
+                    if (error.name === 'NotAllowedError') {
+                        message = 'Camera access denied. Please allow camera permissions.';
+                    } else if (error.name === 'NotFoundError') {
+                        message = 'No camera device found.';
+                    } else if (error.name === 'NotSupportedError') {
+                        message = 'Camera not supported by this browser.';
+                    } else if (error.name === 'OverconstrainedError') {
+                        message = 'Camera constraints not supported.';
+                    } else {
+                        message = `Camera error: ${error.message}`;
+                    }
+
+                    this.statusMessage = message;
+                    this.statusClass = 'error';
+                    this.error = error;
+                },
+
+                // Check camera availability on component mount
+                async checkCameraAvailability() {
+                    try {
+                        const devices = await navigator.mediaDevices.enumerateDevices();
+                        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                        
+                        if (videoDevices.length === 0) {
+                            this.statusMessage = 'No camera devices found';
+                            this.statusClass = 'error';
+                        }
+                    } catch (error) {
+                        console.error('Error checking camera availability:', error);
+                        this.statusMessage = 'Unable to check camera devices';
+                        this.statusClass = 'error';
+                    }
+                }
+            },
+
+            mounted() {
+                // Check if mediaDevices API is available
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    this.statusMessage = 'Camera API not supported in this environment';
+                    this.statusClass = 'error';
+                    return;
+                }
+
+                this.checkCameraAvailability();
+            },
+
+            beforeUnmount() {
+                // Clean up when component is destroyed
+                this.stopCamera();
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

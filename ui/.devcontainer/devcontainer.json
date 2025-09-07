@@ -1,0 +1,21 @@
+{
+    "name": "Edge AI Camera UI DevContainer",
+    "image": "mcr.microsoft.com/devcontainers/javascript-node:20-bullseye",
+    "features": {
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "lts"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash"
+            },
+            "extensions": [
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode"
+            ]
+        }
+    },
+    "postCreateCommand": "npm install"
+}

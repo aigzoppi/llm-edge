@@ -1,0 +1,358 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #2c3e50;
+}
+
+#app {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 40px 30px;
+    text-align: center;
+}
+
+.header h1 {
+    font-size: 2.8rem;
+    font-weight: 300;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    font-weight: 300;
+}
+
+.section {
+    padding: 30px;
+    border-bottom: 1px solid #e8ecf1;
+    transition: all 0.3s ease;
+}
+
+.section:hover {
+    background: rgba(102, 126, 234, 0.02);
+}
+
+.logs-section {
+    border-bottom: none;
+}
+
+h2 {
+    color: #2c3e50;
+    margin-bottom: 25px;
+    font-size: 1.4rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #34495e;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.input-field,
+.textarea-field {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e8ecf1;
+    border-radius: 12px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    background: #fafbfc;
+}
+
+.input-field:focus,
+.textarea-field:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    background: #ffffff;
+}
+
+.textarea-field {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.button-group {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 14px 28px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 140px;
+    text-align: center;
+    font-family: inherit;
+}
+
+.btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-start {
+    background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+    color: white;
+}
+
+.btn-stop {
+    background: linear-gradient(135deg, #e17055 0%, #fdcb6e 100%);
+    color: white;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-secondary {
+    background: #74b9ff;
+    color: white;
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.status-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.status-dot.ready {
+    background: #74b9ff;
+}
+
+.status-dot.success {
+    background: #00b894;
+    box-shadow: 0 0 10px rgba(0, 184, 148, 0.3);
+}
+
+.status-dot.error {
+    background: #e17055;
+    box-shadow: 0 0 10px rgba(225, 112, 85, 0.3);
+}
+
+.status-dot.loading {
+    background: #fdcb6e;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { 
+        opacity: 1; 
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
+}
+
+.status-text {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.response-area,
+.log-area {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 20px;
+    min-height: 180px;
+    max-height: 350px;
+    overflow-y: auto;
+    font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.placeholder {
+    color: #74b9ff;
+    font-style: italic;
+    text-align: center;
+    padding: 60px 20px;
+    font-size: 15px;
+}
+
+.log-entry {
+    margin-bottom: 12px;
+    padding: 12px 16px;
+    border-left: 4px solid #e9ecef;
+    background: white;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.log-entry:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.log-entry.success {
+    border-left-color: #00b894;
+    background: rgba(0, 184, 148, 0.05);
+}
+
+.log-entry.error {
+    border-left-color: #e17055;
+    background: rgba(225, 112, 85, 0.05);
+}
+
+.log-entry.info {
+    border-left-color: #74b9ff;
+    background: rgba(116, 185, 255, 0.05);
+}
+
+.log-timestamp {
+    color: #74b9ff;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.log-message {
+    color: #2c3e50;
+}
+
+.response-success {
+    color: #00695c;
+    background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%);
+    border: 2px solid #c8e6c9;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.response-error {
+    color: #c62828;
+    background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
+    border: 2px solid #ffcdd2;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+pre {
+    margin-top: 10px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Custom scrollbar */
+.response-area::-webkit-scrollbar,
+.log-area::-webkit-scrollbar {
+    width: 8px;
+}
+
+.response-area::-webkit-scrollbar-track,
+.log-area::-webkit-scrollbar-track {
+    background: #f1f3f4;
+    border-radius: 4px;
+}
+
+.response-area::-webkit-scrollbar-thumb,
+.log-area::-webkit-scrollbar-thumb {
+    background: #dadce0;
+    border-radius: 4px;
+}
+
+.response-area::-webkit-scrollbar-thumb:hover,
+.log-area::-webkit-scrollbar-thumb:hover {
+    background: #bdc1c6;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    #app {
+        margin: 10px;
+        border-radius: 15px;
+    }
+    
+    .section {
+        padding: 20px;
+    }
+    
+    .header {
+        padding: 30px 20px;
+    }
+    
+    .header h1 {
+        font-size: 2.2rem;
+    }
+    
+    .button-group {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+}
