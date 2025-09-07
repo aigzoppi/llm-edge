@@ -22,8 +22,6 @@ This system uses:
 
 ## 📦 Installation
 
-
-
 Make sure you have `uv` installed:  
 
 ```bash
@@ -46,7 +44,6 @@ $ huggingface-cli download microsoft/BitNet-b1.58-2B-4T-gguf --local-dir models/
 $ python setup_env.py -md models/BitNet-b1.58-2B-4T -q i2_s
 ```
 
-
 ##🏃 Usage
 
 Run YOLO detection + LLM reasoning pipeline:
@@ -54,6 +51,34 @@ Run YOLO detection + LLM reasoning pipeline:
 ```bash
 uv run python main.py --source 0 --model yolov8n.pt --llm bitnet
 ```
+
+## 🖥️ CLI Options
+
+The `llm-edge` CLI provides flexible options for detection and LLM inference. Run with:
+
+```bash
+uv run llm-edge run [OPTIONS]
+```
+
+### Main Options
+
+| Option                | Type    | Default                                         | Description                                 |
+|-----------------------|---------|-------------------------------------------------|---------------------------------------------|
+| `--image-path`        | str     | `data/images`                                   | Path to images                              |
+| `--number-of-images`  | int     | `3`                                             | Number of images to process                 |
+| `--realtime`          | bool    | `False`                                         | Enable realtime mode                        |
+| `--enable-inference`  | bool    | `False`                                         | Enable LLM inference integration            |
+| `--model`             | str     | `models/bitnet_b1_58-3B/ggml-model-i2_s.gguf`   | Path to model file                          |
+| `--n-predict`         | int     | `1`                                             | Number of tokens to predict                 |
+| `--threads`           | int     | `1`                                             | Number of threads to use                    |
+| `--prompt`            | str     | `Describe the image`                            | Prompt to send to the model                 |
+| `--ctx-size`          | int     | `512`                                           | Context size                                |
+| `--temperature`       | float   | `0.8`                                           | Sampling temperature                        |
+| `--conversation`      | bool    | `False`                                         | Enable conversation mode                    |
+
+> **Note:** LLM inference is disabled by default. Use `--enable-inference` to activate BitNet LLM reasoning.
+
+---
 
 ## 🧠 Example Workflow
 
