@@ -65,7 +65,26 @@ Output is displayed or published via MQTT/REST for downstream use
 ## Roadmap
 
 - Add support for other quantized LLMs
-- Provide prebuilt docker images for Jetson devices
+and VS Code devcontainers for easy development setup.  
+
+---
+
+## 🛠️ Using VS Code Devcontainers (For Non-Engineers)
+
+If you are not familiar with Python or development environments, you can use [Visual Studio Code](https://code.visualstudio.com/) and its **Dev Containers** feature to get started quickly:
+
+1. **Install VS Code:**  
+    Download and install [VS Code](https://code.visualstudio.com/).
+
+2. **Install Dev Containers Extension:**  
+    Open VS Code, go to Extensions (`Ctrl+Shift+X`), and search for "Dev Containers". Install the official extension.
+
+3. **Open the Project in a Dev Container:**  
+    - Clone this repository to your computer.
+    - Open the project folder in VS Code.
+    - When prompted, click "Reopen in Container" (or use the Command Palette: `Ctrl+Shift+P` → "Dev Containers: Reopen in Container").
+
+VS Code will automatically set up the development environment for you, so you don't need to install Python or dependencies manually.images for Jetson devices
 - Add voice input/output integration
 - B+enchmark on Raspberry Pi 5 + NVIDIA Jetson Orin Nano
 
