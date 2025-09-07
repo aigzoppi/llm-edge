@@ -26,7 +26,17 @@ Make sure you have `uv` installed:
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
+
 ```
+
+Install the deps and set virtual enviroment.
+
+```
+cd llm-edge
+uv sync
+
+```
+
 
 ##🏃 Usage
 
