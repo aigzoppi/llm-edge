@@ -22,11 +22,6 @@ This system uses:
 
 ## 📦 Installation
 
-## Make sure that all submodules are initialized
-```bash
-$ cd BitNet
-$ git submodule update --init --recursive
-```
 
 
 Make sure you have `uv` installed:  
@@ -35,12 +30,21 @@ Make sure you have `uv` installed:
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 Create a virtual enviroment
-```
+```bash
 $ cd edgedemo
 $ uv venv
 $ uv sync
 $ source .venv/bin/activate
+
 ```
+## Make sure that all submodules are initialized and Egde LLM is setup
+```bash
+$ cd ../BitNet
+$ git submodule update --init --recursive
+$ uv pip install -r requirements.txt
+$ huggingface-cli download microsoft/BitNet-b1.58-2B-4T-gguf --local-dir models/BitNet-b1.58-2B-4T
+```
+
 
 ##🏃 Usage
 
