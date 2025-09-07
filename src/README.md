@@ -43,6 +43,7 @@ $ cd ../BitNet
 $ git submodule update --init --recursive
 $ uv pip install -r requirements.txt
 $ huggingface-cli download microsoft/BitNet-b1.58-2B-4T-gguf --local-dir models/BitNet-b1.58-2B-4T
+$ python setup_env.py -md models/BitNet-b1.58-2B-4T -q i2_s
 ```
 
 
