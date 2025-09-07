@@ -1,0 +1,19 @@
+{
+  "name": "electron-llm-edge",
+  "version": "1.0.0",
+  "description": "Electron app with Vue.js and REST API integration",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev"
+  },
+  "devDependencies": {
+    "electron": "^22.3.27"
+  },
+  "dependencies": {
+    "axios": "^1.4.0",
+    "vue": "^3.3.0"
+  },
+  "author": "",
+  "license": "ISC"
+}
