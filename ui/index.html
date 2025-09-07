@@ -278,24 +278,40 @@
 
                 stopCamera() {
                     try {
+                        if (this.stream && this.isStreaming) {
+                            // Capture last frame before stopping
+                            const video = this.$refs.videoElement;
+                            const canvas = document.createElement('canvas');
+                            canvas.width = video.videoWidth || 640;
+                            canvas.height = video.videoHeight || 480;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                            const dataUrl = canvas.toDataURL('image/png');
+                            // Save image to disk using Electron IPC
+                            if (window.electronAPI && window.electronAPI.saveImage) {
+                                window.electronAPI.saveImage(dataUrl);
+                            } else {
+                                // fallback: download in browser (for dev/testing)
+                                const a = document.createElement('a');
+                                a.href = dataUrl;
+                                a.download = 'camera_snapshot.png';
+                                a.click();
+                            }
+                        }
                         if (this.stream) {
                             // Stop all tracks
                             this.stream.getTracks().forEach(track => {
                                 track.stop();
                             });
-                            
                             // Clear video source
                             const video = this.$refs.videoElement;
                             video.srcObject = null;
-                            
                             this.stream = null;
                         }
-
                         this.isStreaming = false;
                         this.statusMessage = 'Camera stopped';
                         this.statusClass = 'inactive';
                         this.cameraInfo = null;
-
                     } catch (error) {
                         console.error('Error stopping camera:', error);
                         this.handleCameraError(error);

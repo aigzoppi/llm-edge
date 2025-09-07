@@ -1,5 +1,6 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
+const fs = require('fs');
 const axios = require('axios');
 
 let mainWindow;
@@ -74,5 +75,25 @@ ipcMain.handle('api-call', async (event, { method, endpoint, baseUrl, data }) =>
       status: error.response?.status || 0,
       statusText: error.response?.statusText || 'Network Error'
     };
+  }
+});
+
+// IPC handler to save image
+ipcMain.handle('save-image', async (event, dataUrl) => {
+  try {
+    // Ask user where to save
+    const { canceled, filePath } = await dialog.showSaveDialog({
+      title: 'Save Camera Snapshot',
+      defaultPath: 'camera_snapshot.png',
+      filters: [{ name: 'PNG Image', extensions: ['png'] }]
+    });
+    if (canceled || !filePath) return false;
+    // Remove data URL prefix
+    const base64 = dataUrl.replace(/^data:image\/png;base64,/, '');
+    fs.writeFileSync(filePath, base64, 'base64');
+    return true;
+  } catch (err) {
+    console.error('Failed to save image:', err);
+    return false;
   }
 });
