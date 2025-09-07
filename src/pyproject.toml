@@ -12,7 +12,7 @@ license = { text = "MIT" }
 requires-python = ">=3.11"
 dependencies = [
     "typer>=0.17.4",
-    "ultralytics>=8.3.195",   
+    "ultralytics>=8.3.195",
 ]
 
 [tool.ruff]
@@ -50,7 +50,9 @@ convention = "google"
 
 [dependency-groups]
 dev = [
+    "coverage>=7.10.6",
     "mypy>=1.17.1",
+    "opencv-python>=4.11.0.86",
     "pytest>=8.4.2",
     "pytest-cov>=6.3.0",
     "ruff>=0.12.12",
