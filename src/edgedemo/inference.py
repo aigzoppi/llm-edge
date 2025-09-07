@@ -3,7 +3,7 @@ import platform
 import subprocess
 from pydantic import BaseModel, Field
 from typing import Final
-BUILD_DIR: Final[str] = "../../BitNet/3rdparty/llama.cpp/build"
+BUILD_DIR: Final[str] = os.path.normpath(os.path.join(os.path.dirname(__file__), "../../BitNet/3rdparty/llama.cpp/build"))
 
 class InferenceArgs(BaseModel):
     model: str = Field(..., description="Path to the model file")
