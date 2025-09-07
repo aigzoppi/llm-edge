@@ -22,6 +22,13 @@ This system uses:
 
 ## 📦 Installation
 
+## Make sure that all submodules are initialized
+```bash
+$ cd BitNet
+$ git submodule update --init --recursive
+```
+
+
 Make sure you have `uv` installed:  
 
 ```bash

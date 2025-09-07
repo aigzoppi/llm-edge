@@ -11,8 +11,9 @@ def run(
 ):
     loader = ImageLoader(image_path=image_path, realtime=realtime)
     detector = PeopleDetector()
-    people_counter, crops = detector.detect(loader, number_of_images=number_of_images)
-    print(f'\n Number of people recognized = {people_counter}')
+    images, people_counter = detector.detect(loader, number_of_images=number_of_images)
+    print(f'\nDirectories.')
+    print(f'\nNumber of people recognized = {people_counter}')
 
 if __name__ == "__main__":
     app()

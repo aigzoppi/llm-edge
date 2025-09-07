@@ -5,12 +5,19 @@ import os
 import logging
 from ultralytics import YOLO
 from typing import Tuple, List, TYPE_CHECKING
-
+from pydantic import BaseModel
 if TYPE_CHECKING:
     import numpy as np
 from tqdm import tqdm
+import base64
+import cv2
+from io import BytesIO
+from typing import Iterator
 
 _logger = logging.getLogger(__name__)
+class DetectionContext(BaseModel):
+    image_full_path: str = ''
+    encode_image  : str = ''
 
 class ImageLoader:
     def __init__(self, image_path: str, realtime: bool = False):
@@ -42,24 +49,25 @@ class ImageLoader:
             ValueError: If an image file cannot be loaded (handled internally and logged).
         """
         if not self._realtime:
-            image_files = [img for img in os.listdir(self._image_path) if img.endswith('.jpg') or img.endswith('.png')]
+            image_files = sorted([img for img in os.listdir(self._image_path) if img.endswith('.jpg') or img.endswith('.png')])
             if not image_files:
                 _logger.warning("No image files found in directory: %s", self._image_path)
                 sys.exit(1)
             for image in tqdm(image_files, desc="Loading images"):
                 full_path = os.path.join(self._image_path, image)
+                logging.info("Loading image: %s", full_path)
                 try:
                     frame = self._load_image(full_path)
                 except ValueError as e:
                     _logger.error("Could not load image %s: %s", full_path, e)
                     continue
-                yield frame
+                yield frame, full_path
         else:
             cap = cv2.VideoCapture(0)
             for _ in range(number_of_images):
                 ret, frame = cap.read()
                 if ret:
-                    yield frame
+                    yield frame, full_path
                 else:
                     print("Failed to capture camera frame.")
             cap.release()
@@ -71,7 +79,7 @@ class ImageLoader:
         return image
 
 class PeopleDetector:
-    def __init__(self, model_path: str = "yolov8s.pt"):
+    def __init__(self, model_path: str = "yolo11n.pt"):
         self.model = YOLO(model_path)
         self.crops: List["np.ndarray"] = []
         self.people_counter: int = 0
@@ -93,9 +101,9 @@ class PeopleDetector:
                 - people_counter (int): The total number of detected people across all processed images.
                 - crops (list): A list of cropped image regions corresponding to detected people.
         """
-        self.crops = []
+        detected_objects = []
         self.people_counter = 0
-        for img in loader.generate_frames(number_of_images=number_of_images):
+        for img, full_path in loader.generate_frames(number_of_images=number_of_images):
             results = self.model.predict(img)
             for result in results:
                 for box in result.boxes:
@@ -105,6 +113,10 @@ class PeopleDetector:
                         self.people_counter += 1
                         x1, y1, x2, y2 = map(int, box.xyxy[0].tolist())
                         cropped = img[y1:y2, x1:x2]
-                        self.crops.append(cropped)
-        return self.people_counter, self.crops
+                        # Encode cropped image to base64
+                        _, buffer = cv2.imencode('.jpg', cropped)
+                        encoded = base64.b64encode(buffer).decode('utf-8')
+                        context = DetectionContext(encode_image=encoded, image_full_path=full_path)
+                        detected_objects.append(context)
+        return detected_objects, self.people_counter
 
