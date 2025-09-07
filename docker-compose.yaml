@@ -1,0 +1,26 @@
+edgedemo:
+  build:
+    context: ./edgedemo   # Path to the Dockerfile and app
+  container_name: edgedemo
+  ports:
+    - "8080:8080"
+  environment:
+    - MQTT_BROKER=mqtt://mqtt:1883
+  depends_on:
+    - mqtt
+
+mqtt:
+  image: eclipse-mosquitto:2.0
+  container_name: mqtt
+  ports:
+    - "1883:1883"
+    - "9001:9001"
+  volumes:
+    - mosquitto_data:/mosquitto/data
+    - mosquitto_config:/mosquitto/config
+    - mosquitto_log:/mosquitto/log
+
+volumes:
+  mosquitto_data:
+  mosquitto_config:
+  mosquitto_log:
